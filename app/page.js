@@ -5,6 +5,10 @@ import ModernHeader from '@/components/ModernHeader';
 import KPICard from '@/components/KPICard';
 import StatusBadge from '@/components/StatusBadge';
 import {
+  Wallet,
+  Receipt,
+  CheckCircle2,
+  AlertTriangle,
   XCircle,
   Plus,
   Download,
@@ -31,11 +35,11 @@ import {
   TrendingDown,
   CreditCard
 } from 'lucide-react';
+
 function formatRupiah(num) {
   if (num === null || num === undefined || isNaN(num)) return 'Rp 0';
   return 'Rp ' + Math.round(num).toLocaleString('id-ID');
 }
-
 export default function KeuanganBusdevApp() {
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
