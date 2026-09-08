@@ -562,8 +562,9 @@ export default function KeuanganBusdevApp() {
                         </td>
                         <td className="py-3.5 px-3 text-center no-print">
                           <button
+                            key={`opname-${m.id}`}
                             onClick={() => openOpnameModalFor(m)}
-                            className="p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/50 rounded-lg transition"
+                            className="p-1.5 text-brand-accent hover:text-brand-danger hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all"
                             title="Update uang fisik hasil opname"
                           >
                             <Edit2 className="w-4 h-4" />
