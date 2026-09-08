@@ -186,19 +186,19 @@ def get_members():
         selisih = uang_fisik - saldo_buku
 
         if selisih == 0:
-            status_fisik = "✅ PAS / KLOP"
-            status_code = "klop"
+            status_fisik = "✅ SEIMBANG"
+            status_code = "seimbang"
             if saldo_buku > 0:
                 tindak_lanjut = f"Setor sisa Rp {saldo_buku:,.0f} ke Kasir".replace(",", ".")
             else:
-                tindak_lanjut = "Lunas / Pas"
+                tindak_lanjut = "Sudah Tertentuk"
         elif selisih < 0:
-            status_fisik = "❌ KURANG (Tekor)"
-            status_code = "tekor"
-            tindak_lanjut = f"Wajib ganti tekor Rp {abs(selisih):,.0f}".replace(",", ".")
+            status_fisik = "❌ KEKURANGAN"
+            status_code = "kekurangan"
+            tindak_lanjut = f"Wajib mengganti kekurangan Rp {abs(selisih):,.0f}".replace(",", ".")
         else:
-            status_fisik = "⚠️ LEBIH"
-            status_code = "lebih"
+            status_fisik = "⚠️ BERLEBIHAN"
+            status_code = "berlebihan"
             tindak_lanjut = f"Setor kelebihan Rp {selisih:,.0f}".replace(",", ".")
 
         result.append({
@@ -239,18 +239,17 @@ def get_member(member_id):
     selisih = uang_fisik - saldo_buku
 
     if selisih == 0:
-        status_fisik = "✅ PAS / KLOP"
-        status_code = "klop"
-        tindak_lanjut = f"Setor sisa Rp {saldo_buku:,.0f} ke Kasir".replace(",", ".") if saldo_buku > 0 else "Lunas / Pas"
+        status_fisik = "✅ SEIMBANG"
+        status_code = "seimbang"
+        tindak_lanjut = f"Setor sisa Rp {saldo_buku:,.0f} ke Kasir".replace(",", ".") if saldo_buku > 0 else "Sudah Tertentuk"
     elif selisih < 0:
-        status_fisik = "❌ KURANG (Tekor)"
-        status_code = "tekor"
-        tindak_lanjut = f"Wajib ganti tekor Rp {abs(selisih):,.0f}".replace(",", ".")
+        status_fisik = "❌ KEKURANGAN"
+        status_code = "kekurangan"
+        tindak_lanjut = f"Wajib mengganti kekurangan Rp {abs(selisih):,.0f}".replace(",", ".")
     else:
-        status_fisik = "⚠️ LEBIH"
-        status_code = "lebih"
+        status_fisik = "⚠️ BERLEBIHAN"
+        status_code = "berlebihan"
         tindak_lanjut = f"Setor kelebihan Rp {selisih:,.0f}".replace(",", ".")
-
     return {
         "id": m["id"],
         "name": m["name"],
@@ -466,15 +465,14 @@ def get_summary():
     total_selisih_fisik = sum(m["selisih"] for m in members)
 
     if total_selisih_fisik == 0:
-        status_selisih_tim = "✅ FISIK TIM KLOP"
+        status_selisih_tim = "✅ SELURUH ANGGOTA SEIMBANG"
         tindak_lanjut_tim = "Semua fisik sesuai catatan"
     elif total_selisih_fisik < 0:
-        status_selisih_tim = f"❌ TOTAL TEKOR Rp {abs(total_selisih_fisik):,.0f}".replace(",", ".")
-        tindak_lanjut_tim = "Investigasi selisih fisik!"
+        status_selisih_tim = f"❌ TOTAL KEKURANGAN Rp {abs(total_selisih_fisik):,.0f}".replace(",", ".")
+        tindak_lanjut_tim = "Investigasi kekurangan fisik!"
     else:
-        status_selisih_tim = f"⚠️ TOTAL LEBIH Rp {total_selisih_fisik:,.0f}".replace(",", ".")
+        status_selisih_tim = f"⚠️ TOTAL BERLEBIHAN Rp {total_selisih_fisik:,.0f}".replace(",", ".")
         tindak_lanjut_tim = "Investigasi kelebihan fisik!"
-
     # Audit Balance Check
     # Total Pertanggungjawaban Fisik = Realisasi Belanja + Sisa Uang Fisik Tim + Sisa Kas Induk
     audit_total = total_realisasi_belanja + total_uang_fisik + sisa_kas_induk
@@ -484,12 +482,10 @@ def get_summary():
         status_audit = f"✅ 100% BALANCE (Uang Fisik + Nota Lengkap Rp {plafon_induk:,.0f})".replace(",", ".")
         audit_code = "balance"
     elif audit_gap < 0:
-        status_audit = f"❌ FISIK TEKOR / KURANG Rp {abs(audit_gap):,.0f}".replace(",", ".")
-        audit_code = "tekor"
+        status_audit = f"❌ KEKURANGAN FISIK Rp {abs(audit_gap):,.0f}".replace(",", ".")
+        audit_code = "kekurangan"
     else:
-        status_audit = f"⚠️ FISIK LEBIH Rp {audit_gap:,.0f}".replace(",", ".")
-        audit_code = "lebih"
-
+        status_audit = f"⚠️ BERLEBIHAN FISIK Rp {audit_gap:,.0f}".replace(",", ".")
     return {
         "plafon_induk": plafon_induk,
         "total_distribusi": total_distribusi,

@@ -125,8 +125,8 @@ def export_database_to_excel():
         ws_res.cell(row_idx, 6, f"=D{row_idx}-E{row_idx}").number_format = rupiah_format
         ws_res.cell(row_idx, 7, m["uang_fisik"]).number_format = rupiah_format
         ws_res.cell(row_idx, 8, f"=G{row_idx}-F{row_idx}").number_format = rupiah_format
-        ws_res.cell(row_idx, 9, f'=IF(H{row_idx}=0, "✅ PAS / KLOP", IF(H{row_idx}<0, "❌ KURANG (Tekor)", "⚠️ LEBIH"))')
-        ws_res.cell(row_idx, 10, f'=IF(H{row_idx}=0, IF(F{row_idx}>0, "Setor sisa Rp " & TEXT(F{row_idx}, "#,##0") & " ke Kasir", "Lunas / Pas"), IF(H{row_idx}<0, "Wajib ganti tekor Rp " & TEXT(ABS(H{row_idx}), "#,##0"), "Setor kelebihan Rp " & TEXT(H{row_idx}, "#,##0")))')
+        ws_res.cell(row_idx, 9, f'=IF(H{row_idx}=0, "✅ SEIMBANG", IF(H{row_idx}<0, "❌ KEKURANGAN", "⚠️ BERLEBIHAN"))')
+        ws_res.cell(row_idx, 10, f'=IF(H{row_idx}=0, IF(F{row_idx}>0, "Setor sisa Rp " & TEXT(F{row_idx}, "#,##0") & " ke Kasir", "Sudah Tertentuk"), IF(H{row_idx}<0, "Wajib mengganti kekurangan Rp " & TEXT(ABS(H{row_idx}), "#,##0"), "Setor kelebihan Rp " & TEXT(H{row_idx}, "#,##0")))')
 
         for c in range(1, 11):
             ws_res.cell(row_idx, c).border = thin_border
@@ -149,9 +149,8 @@ def export_database_to_excel():
     ws_res.cell(total_row, 6, f"=SUM(F14:F{total_row-1})").number_format = rupiah_format
     ws_res.cell(total_row, 7, f"=SUM(G14:G{total_row-1})").number_format = rupiah_format
     ws_res.cell(total_row, 8, f"=SUM(H14:H{total_row-1})").number_format = rupiah_format
-    ws_res.cell(total_row, 9, f'=IF(H{total_row}=0, "✅ FISIK TIM KLOP", IF(H{total_row}<0, "❌ TOTAL TEKOR " & TEXT(ABS(H{total_row}), "#,##0"), "⚠️ TOTAL LEBIH"))')
+    ws_res.cell(total_row, 9, f'=IF(H{total_row}=0, "✅ SELURUH ANGGOTA SEIMBANG", IF(H{total_row}<0, "❌ TOTAL KEKURANGAN " & TEXT(ABS(H{total_row}), "#,##0"), "⚠️ TOTAL BERLEBIHAN"))')
     ws_res.cell(total_row, 10, f'=IF(H{total_row}=0, "Semua fisik sesuai catatan", "Investigasi selisih fisik!")')
-
     for c in range(1, 11):
         cell = ws_res.cell(total_row, c)
         cell.fill = sub_header_fill
@@ -188,10 +187,8 @@ def export_database_to_excel():
 
     status_audit_row = audit_head_row + 7
     ws_res.cell(status_audit_row, 2, "STATUS KESEIMBANGAN AUDIT KAS (BALANCE CHECK)").font = Font(name='Calibri', size=11, bold=True, color='1E3A8A')
-    ws_res.cell(status_audit_row, 5, f'=IF(E{audit_head_row+6}=0, "✅ 100% BALANCE (Uang Fisik + Nota Lengkap Rp " & TEXT(E{audit_head_row+1}, "#,##0") & ")", IF(E{audit_head_row+6}<0, "❌ FISIK TEKOR / KURANG " & TEXT(ABS(E{audit_head_row+6}), "Rp #,##0"), "⚠️ FISIK LEBIH " & TEXT(E{audit_head_row+6}, "Rp #,##0")))').font = bold_font
+    ws_res.cell(status_audit_row, 5, f'=IF(E{audit_head_row+6}=0, "✅ 100% SEIMBANG (Uang Fisik + Nota Lengkap Rp " & TEXT(E{audit_head_row+1}, "#,##0") & ")", IF(E{audit_head_row+6}<0, "❌ KEKURANGAN FISIK KAS " & TEXT(ABS(E{audit_head_row+6}), "Rp #,##0"), "⚠️ BERLEBIHAN FISIK KAS " & TEXT(E{audit_head_row+6}, "Rp #,##0")))').font = bold_font
     ws_res.cell(status_audit_row, 7, "Formula otomatis mendeteksi selisih fisik vs plafon").font = subtitle_font
-
-    # --- MEMBER SHEETS ---
     for m in members:
         sheet_title = m["name"].replace("'", "")[:31]
         ws_m = wb.create_sheet(title=sheet_title)
@@ -248,8 +245,7 @@ def export_database_to_excel():
 
         ws_m['B9'] = "Status Keseimbangan Fisik"
         ws_m['D9'] = '=IF(D8=0, "✅ PAS / KLOP (Uang Fisik Sesuai)", IF(D8<0, "❌ FISIK TEKOR / KURANG " & TEXT(ABS(D8), "Rp #,##0"), "⚠️ FISIK LEBIH"))'
-        ws_m['D9'].font = bold_font
-
+        ws_m['D9'] = '=IF(D8=0, "✅ SEIMBANG (Uang Fisik Sesuai)", IF(D8<0, "❌ KEKURANGAN FISIK " & TEXT(ABS(D8), "Rp #,##0"), "⚠️ BERLEBIHAN FISIK"))'
         for r in range(4, 10):
             ws_m.cell(r, 2).font = normal_font
             ws_m.cell(r, 2).fill = card_fill
