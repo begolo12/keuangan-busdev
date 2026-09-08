@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import ModernHeader from '@/components/ModernHeader';
+import KPICard from '@/components/KPICard';
+import StatusBadge from '@/components/StatusBadge';
 import {
-  Wallet,
-  Receipt,
-  CheckCircle2,
-  AlertTriangle,
   XCircle,
   Plus,
   Download,
@@ -341,164 +340,77 @@ export default function KeuanganBusdevApp() {
         </div>
       )}
 
-      {/* Top Header */}
-      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-md shadow-brand-500/20">
-              <Wallet className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  Keuangan Busdev
-                </h1>
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-brand-100 text-brand-800 dark:bg-brand-900/60 dark:text-brand-300">
-                  Tahun {summary?.tahun || '2026'}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Sistem Rekapitulasi Persekot, Reimbursement & Opname Kas Fisik
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center flex-wrap gap-2">
-            <button
-              onClick={() => openNewTxModal()}
-              className="inline-flex items-center px-3.5 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white hover:bg-brand-700 active:scale-95 transition-all shadow-sm shadow-brand-600/20"
-            >
-              <Plus className="w-4 h-4 mr-1.5" />
-              Catat Transaksi
-            </button>
-
-            <a
-              href="/api/export-excel"
-              download
-              className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition"
-              title="Unduh format file Excel (.xlsx)"
-            >
-              <FileSpreadsheet className="w-4 h-4 mr-1.5 text-emerald-600 dark:text-emerald-400" />
-              Unduh Excel
-            </a>
-
-            <button
-              onClick={() => window.print()}
-              className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition"
-              title="Cetak Laporan / Simpan PDF"
-            >
-              <Printer className="w-4 h-4 mr-1.5 text-slate-500" />
-              Cetak
-            </button>
-
-            <button
-              onClick={() => setShowSettingsModal(true)}
-              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition"
-              title="Pengaturan Plafon & Anggota"
-            >
-              <Settings className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition"
-              title="Ganti Mode Gelap / Terang"
-            >
-              {darkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
-            </button>
-          </div>
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-sm font-medium transition-all transform animate-bounce ${
+          toast.type === 'error' ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white' : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white'
+        }`}>
+          {toast.type === 'error' ? <AlertTriangle className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
+          <span>{toast.msg}</span>
+          <button onClick={() => setToast(null)} className="ml-2 p-1 hover:bg-white/20 rounded-lg transition-colors"><X className="w-4 h-4" /></button>
         </div>
-      </header>
+      )}
+
+      {/* Modern Header Component */}
+      <ModernHeader 
+        onNewTx={openNewTxModal}
+        darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode}
+        title="Keuangan Busdev"
+        subtitle="Rekapitulasi Persekot & Audit Kas Fisik"
+        year={summary?.tahun || '2026'}
+      />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Executive Metric Cards Banner */}
+        {/* Executive Metric Cards Banner - Redesigned with KPICard component */}
         {summary && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
             {/* Plafon Kas Induk */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
-                <span>Plafon Kas Induk</span>
-                <span className="w-2 h-2 rounded-full bg-brand-500"></span>
-              </div>
-              <div className="text-xl font-bold text-slate-900 dark:text-white">
-                {formatRupiah(summary.plafon_induk)}
-              </div>
-              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
-                <span>Sisa di Kasir:</span>
-                <span className="font-semibold text-slate-700 dark:text-slate-300">{formatRupiah(summary.sisa_kas_induk)}</span>
-              </div>
-            </div>
+            <KPICard
+              title="Plafon Kas Induk"
+              icon={Wallet}
+              value={formatRupiah(summary.plafon_induk)}
+              subValue={`Sisa di Kasir: ${formatRupiah(summary.sisa_kas_induk)}`}
+              accentColor="brand"
+            />
 
             {/* Total Kas Terdistribusi */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
-                <span>Persekot Tim</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-blue-500" />
-              </div>
-              <div className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                {formatRupiah(summary.total_distribusi)}
-              </div>
-              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">
-                {summary.status_distribusi}
-              </div>
-            </div>
+            <KPICard
+              title="Persekot Tim"
+              icon={ArrowUpRight}
+              value={formatRupiah(summary.total_distribusi)}
+              subValue={summary.status_distribusi}
+              accentColor="blue"
+            />
 
-            {/* Total Realisasi Belanja */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
-                <span>Realisasi Belanja</span>
-                <ArrowDownRight className="w-3.5 h-3.5 text-rose-500" />
-              </div>
-              <div className="text-xl font-bold text-rose-600 dark:text-rose-400">
-                {formatRupiah(summary.total_realisasi_belanja)}
-              </div>
-              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Total nota belanja tim
-              </div>
-            </div>
+            {/* Realisasi Belanja */}
+            <KPICard
+              title="Realisasi Belanja"
+              icon={ArrowDownRight}
+              value={formatRupiah(summary.total_realisasi_belanja)}
+              subValue="Total nota tim"
+              accentColor="rose"
+            />
 
-            {/* Sisa Uang Fisik Riil Tim */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
-                <span>Total Fisik Opname</span>
-                <Coins className="w-3.5 h-3.5 text-emerald-500" />
-              </div>
-              <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                {formatRupiah(summary.total_uang_fisik)}
-              </div>
-              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Uang tunai di tangan tim
-              </div>
-            </div>
+            {/* Sisa Uang Fisik */}
+            <KPICard
+              title="Fisik Opname"
+              icon={Coins}
+              value={formatRupiah(summary.total_uang_fisik)}
+              subValue="Uang tunai tim"
+              accentColor="emerald"
+            />
 
-            {/* Audit Keseimbangan Kas (Balance Check) */}
-            <div className={`rounded-xl p-4 border shadow-sm ${
-              summary.audit_code === 'balance'
-                ? 'bg-emerald-50/70 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800/50'
-                : summary.audit_code === 'tekor'
-                ? 'bg-rose-50/70 border-rose-200 dark:bg-rose-950/30 dark:border-rose-800/50'
-                : 'bg-amber-50/70 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800/50'
-            }`}>
-              <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                <span className={
-                  summary.audit_code === 'balance' ? 'text-emerald-700 dark:text-emerald-300' :
-                  summary.audit_code === 'tekor' ? 'text-rose-700 dark:text-rose-300' : 'text-amber-700 dark:text-amber-300'
-                }>
-                  Status Audit Kas
-                </span>
-                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div className={`text-base font-extrabold ${
-                summary.audit_code === 'balance' ? 'text-emerald-700 dark:text-emerald-400' :
-                summary.audit_code === 'tekor' ? 'text-rose-700 dark:text-rose-400' : 'text-amber-700 dark:text-amber-400'
-              }`}>
-                {summary.audit_code === 'balance' ? '100% BALANCE' : formatRupiah(summary.audit_gap)}
-              </div>
-              <div className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-400 truncate">
-                {summary.status_selisih_tim}
-              </div>
-            </div>
+            {/* Audit Balance Check */}
+            <KPICard
+              title="Status Audit"
+              icon={ShieldCheck}
+              value={summary.audit_code === 'balance' ? '100% BALANCE' : formatRupiah(summary.audit_gap)}
+              subValue={summary.status_selisih_tim}
+              trend={summary.audit_gap !== 0 ? (summary.audit_gap / summary.plafon_induk * 100) : undefined}
+              accentColor={summary.audit_code === 'balance' ? 'emerald' : 'amber'}
+            />
           </div>
         )}
 
