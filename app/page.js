@@ -4,10 +4,9 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ModernHeader from '@/components/ModernHeader';
 import KPICard from '@/components/KPICard';
 import StatusBadge from '@/components/StatusBadge';
+import SkeletonCard from '@/components/SkeletonCard';
 import {
   Wallet,
-  Receipt,
-  CheckCircle2,
   AlertTriangle,
   XCircle,
   Plus,
@@ -367,8 +366,14 @@ export default function KeuanganBusdevApp() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Executive Metric Cards Banner - Redesigned with KPICard component */}
-        {summary && (
+        {/* Executive Metric Cards Banner with Loading States */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+            {[...Array(5)].map((_, i) => (
+              <SkeletonCard key={i} showProgress={i === 4} />
+            ))}
+          </div>
+        ) : summary && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
             {/* Plafon Kas Induk */}
             <KPICard
@@ -417,10 +422,6 @@ export default function KeuanganBusdevApp() {
             />
           </div>
         )}
-
-        {/* Navigation Tabs Bar */}
-        <div className="border-b border-slate-200 dark:border-slate-700 no-print">
-          <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto pb-1 text-sm font-medium">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`px-4 py-2.5 rounded-lg whitespace-nowrap transition-all flex items-center space-x-2 ${
