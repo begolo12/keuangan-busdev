@@ -346,8 +346,8 @@ export default function KeuanganBusdevApp() {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-sm font-medium transition-all transform animate-bounce ${
-          toast.type === 'error' ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white' : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white'
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-sm font-medium transition-all transform animate-bounce ${
+          toast.type === 'error' ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
         }`}>
           {toast.type === 'error' ? <AlertTriangle className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
           <span>{toast.msg}</span>
@@ -397,16 +397,16 @@ export default function KeuanganBusdevApp() {
               accentColor="rose"
             />
 
-            {/* Sisa Uang Fisik */}
+            {/* Sisa Uang Fisik Riil Tim */}
             <KPICard
               title="Fisik Opname"
               icon={Coins}
               value={formatRupiah(summary.total_uang_fisik)}
-              subValue="Uang tunai tim"
+              subValue="Uang tunai di tangan tim"
               accentColor="emerald"
             />
 
-            {/* Audit Balance Check */}
+            {/* Audit Keseimbangan Kas (Balance Check) */}
             <KPICard
               title="Status Audit"
               icon={ShieldCheck}
@@ -417,9 +417,6 @@ export default function KeuanganBusdevApp() {
             />
           </div>
         )}
-
-        {/* Navigation Tabs Bar */}
-        <div className="border-b border-slate-200 dark:border-slate-700 no-print">
           <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto pb-1 text-sm font-medium">
             <button
               onClick={() => setActiveTab('dashboard')}
