@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Wallet,
   Receipt,
@@ -25,9 +25,13 @@ import {
   Coins,
   ShieldCheck,
   ChevronRight,
-  FileSpreadsheet
+  FileSpreadsheet,
+  X,
+  Bell,
+  TrendingUp,
+  TrendingDown,
+  CreditCard
 } from 'lucide-react';
-
 function formatRupiah(num) {
   if (num === null || num === undefined || isNaN(num)) return 'Rp 0';
   return 'Rp ' + Math.round(num).toLocaleString('id-ID');
