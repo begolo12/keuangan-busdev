@@ -1,0 +1,22 @@
+# Node & dependencies
+node_modules/
+dist-electron/
+.next/
+out/
+
+# Environment files (local)
+.env.local
+.env.*.local
+
+# Python / SQLite cache
+__pycache__/
+*.py[cod]
+*$py.class
+keuangan_busdev.db
+
+# Misc
+.DS_Store
+*.log
+
+.vercel
+.env*

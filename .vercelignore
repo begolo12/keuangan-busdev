@@ -1,0 +1,11 @@
+dist-electron/
+node_modules/
+.next/
+backend/
+static/
+keuangan_busdev.db
+*.exe
+*.zip
+*.bat
+.git/
+.vercel/
